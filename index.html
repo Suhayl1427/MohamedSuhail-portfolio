@@ -21,6 +21,7 @@
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
   html { scroll-behavior: smooth; }
+
   body {
     font-family: 'DM Sans', sans-serif;
     background: var(--white);
@@ -29,12 +30,31 @@
   }
 
   /* ══════════════════════════════
+     GLOBAL PARTICLE CANVAS
+     Fixed, full-viewport, behind everything
+  ══════════════════════════════ */
+  #bgCanvas {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  /* Every section and nav stacks above canvas */
+  nav, section, .mobile-menu {
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ══════════════════════════════
      NAV
   ══════════════════════════════ */
   nav {
-    position: fixed;
+    position: fixed !important;
     top: 0; left: 0; right: 0;
-    z-index: 100;
+    z-index: 100 !important;
     background: var(--gradient);
     padding: 0 3rem;
     height: 56px;
@@ -66,7 +86,6 @@
   }
   .nav-links a:hover { color: var(--white); }
 
-  /* Hamburger */
   .nav-toggle {
     display: none;
     flex-direction: column;
@@ -88,13 +107,12 @@
   .nav-toggle.open span:nth-child(2) { opacity: 0; }
   .nav-toggle.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 
-  /* Mobile drawer */
   .mobile-menu {
     display: none;
-    position: fixed;
+    position: fixed !important;
     top: 56px; left: 0; right: 0;
     background: var(--gradient);
-    z-index: 99;
+    z-index: 99 !important;
     flex-direction: column;
     padding: 1rem 0;
     border-top: 1px solid rgba(255,255,255,0.1);
@@ -112,6 +130,7 @@
 
   /* ══════════════════════════════
      SHARED SECTION STYLES
+     Transparent backgrounds so canvas shows through
   ══════════════════════════════ */
   section {
     min-height: 100vh;
@@ -119,7 +138,9 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
+    background: transparent;  /* let canvas show */
   }
+
   .section-title {
     font-family: 'Syne', sans-serif;
     font-size: clamp(1.8rem, 4vw, 3rem);
@@ -139,7 +160,6 @@
      HOME
   ══════════════════════════════ */
   #home {
-    background: var(--white);
     align-items: center;
     text-align: center;
     padding-top: 56px;
@@ -191,7 +211,6 @@
   /* ══════════════════════════════
      ABOUT
   ══════════════════════════════ */
-  #about { background: var(--white); }
   .about-grid {
     display: grid;
     grid-template-columns: 1fr 1.6fr;
@@ -201,10 +220,7 @@
     margin: 0 auto;
     width: 100%;
   }
-  .about-photo-wrap {
-    display: flex;
-    justify-content: center;
-  }
+  .about-photo-wrap { display: flex; justify-content: center; }
   .profile-img-container {
     width: 280px;
     height: 340px;
@@ -222,9 +238,20 @@
     height: 100%;
     object-fit: cover;
   }
+
+  /* frosted glass card for about text — keeps text readable over canvas */
+  .about-text {
+    background: rgba(255,255,255,0.82);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 2rem 2.2rem;
+    border: 1px solid rgba(255,255,255,0.6);
+    box-shadow: 0 4px 24px rgba(55,48,163,0.07);
+  }
   .about-text p {
     font-size: clamp(0.95rem, 1.4vw, 1.15rem);
-    color: #555;
+    color: #444;
     line-height: 1.85;
     font-weight: 300;
   }
@@ -232,7 +259,6 @@
   /* ══════════════════════════════
      SKILLS
   ══════════════════════════════ */
-  #skills { background: var(--white); }
   .skills-row {
     display: flex;
     flex-wrap: wrap;
@@ -241,25 +267,25 @@
     max-width: 1000px;
     margin: 0 auto 1.5rem;
   }
-  .skill-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
+  .skill-item { display: flex; flex-direction: column; align-items: center; }
   .skill-logo {
     width: 100px;
     height: 100px;
     border-radius: 20px;
     overflow: hidden;
-    background: #f0f1f5;
+    background: rgba(255,255,255,0.88);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255,255,255,0.7);
     display: flex;
     align-items: center;
     justify-content: center;
     transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 2px 12px rgba(55,48,163,0.08);
   }
   .skill-logo:hover {
     transform: translateY(-4px);
-    box-shadow: 0 8px 24px rgba(79,70,229,0.15);
+    box-shadow: 0 8px 24px rgba(79,70,229,0.2);
   }
   .skill-logo img {
     width: 100%;
@@ -280,11 +306,7 @@
   /* ══════════════════════════════
      PROJECTS
   ══════════════════════════════ */
-  #projects { background: var(--white); }
-  .project-zigzag {
-    max-width: 1100px;
-    margin: 0 auto;
-  }
+  .project-zigzag { max-width: 1100px; margin: 0 auto; }
   .project-item {
     display: flex;
     align-items: center;
@@ -294,24 +316,28 @@
     transform: translateY(60px);
     transition: all 0.8s ease;
   }
-  .project-item.show {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  .project-item.show { opacity: 1; transform: translateY(0); }
   .project-item.reverse { flex-direction: row-reverse; }
-  .project-content { flex: 1; }
-  .project-content p {
-    font-size: 1.05rem;
-    line-height: 1.85;
-    color: #555;
-    font-weight: 300;
+
+  /* frosted glass for project descriptions */
+  .project-content {
+    flex: 1;
+    background: rgba(255,255,255,0.82);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 16px;
+    padding: 1.8rem 2rem;
+    border: 1px solid rgba(255,255,255,0.6);
+    box-shadow: 0 4px 20px rgba(55,48,163,0.07);
   }
+  .project-content p { font-size: 1.05rem; line-height: 1.85; color: #444; font-weight: 300; }
+
   .project-card {
     flex: 1;
     border-radius: 16px;
     overflow: hidden;
     background: linear-gradient(160deg, var(--indigo), var(--dark-navy));
-    box-shadow: 0 8px 32px rgba(55,48,163,0.25);
+    box-shadow: 0 8px 32px rgba(55,48,163,0.3);
   }
   .project-card-img-wrap { position: relative; }
   .project-card-img-wrap img {
@@ -331,23 +357,9 @@
     font-weight: 800;
     text-shadow: 0 2px 8px rgba(0,0,0,0.6);
   }
-  .project-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    padding: 0.9rem 1.2rem;
-  }
-  .project-tag {
-    font-size: 0.68rem;
-    font-weight: 700;
-    letter-spacing: 0.07em;
-    color: rgba(255,255,255,0.8);
-  }
-  .project-visit {
-    display: flex;
-    justify-content: center;
-    padding: 0 1.2rem 1.2rem;
-  }
+  .project-tags { display: flex; flex-wrap: wrap; gap: 0.5rem; padding: 0.9rem 1.2rem; }
+  .project-tag { font-size: 0.68rem; font-weight: 700; letter-spacing: 0.07em; color: rgba(255,255,255,0.8); }
+  .project-visit { display: flex; justify-content: center; padding: 0 1.2rem 1.2rem; }
   .btn-visit {
     display: inline-block;
     padding: 0.55rem 2.2rem;
@@ -365,7 +377,6 @@
   /* ══════════════════════════════
      SPECIALIZATIONS
   ══════════════════════════════ */
-  #specializations { background: var(--white); }
   .spec-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -374,7 +385,10 @@
     margin: 0 auto;
   }
   .spec-card {
-    background: var(--card-bg);
+    background: rgba(229,231,235,0.88);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.7);
     border-radius: 20px;
     padding: 2.5rem 2rem 2rem;
     position: relative;
@@ -382,6 +396,7 @@
     flex-direction: column;
     gap: 1.2rem;
     margin-top: 55px;
+    box-shadow: 0 4px 20px rgba(55,48,163,0.08);
   }
   .spec-icon-wrap {
     width: 110px;
@@ -394,13 +409,9 @@
     justify-content: center;
     margin: -65px auto 0;
     position: relative;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.25);
   }
-  .spec-icon-wrap img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-  }
+  .spec-icon-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; }
   .spec-card p {
     font-size: clamp(0.9rem, 1.2vw, 1.05rem);
     color: #333;
@@ -412,7 +423,6 @@
   /* ══════════════════════════════
      CONTACT
   ══════════════════════════════ */
-  #contact { background: var(--white); }
   .contact-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -421,19 +431,17 @@
     margin: 0 auto;
     align-items: start;
   }
-  .contact-left h3 {
-    font-family: 'Syne', sans-serif;
-    font-size: 1.5rem;
-    font-weight: 800;
-    margin-bottom: 0.8rem;
+  .contact-left {
+    background: rgba(255,255,255,0.82);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.6);
+    border-radius: 20px;
+    padding: 2rem 2.2rem;
+    box-shadow: 0 4px 20px rgba(55,48,163,0.07);
   }
-  .contact-left > p {
-    color: #555;
-    line-height: 1.75;
-    font-size: 0.95rem;
-    font-weight: 300;
-    margin-bottom: 1.5rem;
-  }
+  .contact-left h3 { font-family: 'Syne', sans-serif; font-size: 1.5rem; font-weight: 800; margin-bottom: 0.8rem; }
+  .contact-left > p { color: #555; line-height: 1.75; font-size: 0.95rem; font-weight: 300; margin-bottom: 1.5rem; }
   .contact-info-item {
     display: flex;
     align-items: center;
@@ -448,12 +456,9 @@
   .contact-info-item .icon { font-size: 1.2rem; flex-shrink: 0; }
   .social-links { display: flex; gap: 1rem; margin-top: 1.2rem; }
   .social-icon {
-    width: 46px;
-    height: 46px;
+    width: 46px; height: 46px;
     border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: flex; align-items: center; justify-content: center;
     text-decoration: none;
   }
   .social-icon.linkedin { background: #0a66c2; }
@@ -464,19 +469,11 @@
     background: linear-gradient(160deg, var(--indigo) 0%, var(--dark-navy) 100%);
     border-radius: 20px;
     padding: 2rem 1.8rem;
+    box-shadow: 0 8px 32px rgba(55,48,163,0.3);
   }
-  .form-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem;
-    margin-bottom: 1.1rem;
-  }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.1rem; }
   .form-group { display: flex; flex-direction: column; gap: 0.35rem; }
-  .form-group label {
-    color: rgba(255,255,255,0.8);
-    font-size: 0.82rem;
-    font-weight: 500;
-  }
+  .form-group label { color: rgba(255,255,255,0.8); font-size: 0.82rem; font-weight: 500; }
   .form-group input,
   .form-group textarea {
     background: rgba(255,255,255,0.95);
@@ -505,12 +502,8 @@
     transition: background 0.2s, color 0.2s;
   }
   .btn-send:hover { background: var(--blue-light); color: white; }
-  .btn-send:disabled {
-    opacity: 0.7;
-    cursor: not-allowed;
-  }
+  .btn-send:disabled { opacity: 0.7; cursor: not-allowed; }
 
-  /* Success / Error toast */
   .form-toast {
     display: none;
     margin-top: 1rem;
@@ -520,21 +513,18 @@
     font-weight: 500;
     text-align: center;
   }
-  .form-toast.success {
-    display: block;
-    background: rgba(134,239,172,0.2);
-    color: #86efac;
-    border: 1px solid rgba(134,239,172,0.35);
-  }
-  .form-toast.error {
-    display: block;
-    background: rgba(252,165,165,0.2);
-    color: #fca5a5;
-    border: 1px solid rgba(252,165,165,0.35);
+  .form-toast.success { display: block; background: rgba(134,239,172,0.2); color: #86efac; border: 1px solid rgba(134,239,172,0.35); }
+  .form-toast.error   { display: block; background: rgba(252,165,165,0.2); color: #fca5a5; border: 1px solid rgba(252,165,165,0.35); }
+
+  /* ══════════════════════════════
+     SECTION TITLE readability
+  ══════════════════════════════ */
+  .section-title {
+    text-shadow: 0 1px 0 rgba(255,255,255,0.9);
   }
 
   /* ══════════════════════════════
-     TABLET  (≤ 1024px)
+     TABLET
   ══════════════════════════════ */
   @media (max-width: 1024px) {
     nav { padding: 0 1.8rem; }
@@ -546,7 +536,7 @@
   }
 
   /* ══════════════════════════════
-     MOBILE  (≤ 768px)
+     MOBILE
   ══════════════════════════════ */
   @media (max-width: 768px) {
     nav { padding: 0 1.2rem; }
@@ -563,16 +553,15 @@
     .project-item,
     .project-item.reverse { flex-direction: column; gap: 1.5rem; margin: 50px 0; }
     .project-card { width: 100%; }
+    .project-content { padding: 1.2rem 1.4rem; }
     .project-content p { font-size: 0.95rem; text-align: center; }
     .spec-grid { grid-template-columns: 1fr; gap: 3rem; }
     .spec-card { margin-top: 55px; }
     .contact-grid { grid-template-columns: 1fr; gap: 2rem; }
     .form-row { grid-template-columns: 1fr; }
+    .contact-left { padding: 1.5rem; }
   }
 
-  /* ══════════════════════════════
-     SMALL MOBILE  (≤ 400px)
-  ══════════════════════════════ */
   @media (max-width: 400px) {
     .hero-name { font-size: 2rem; }
     .skill-logo { width: 70px; height: 70px; }
@@ -581,6 +570,12 @@
 </style>
 </head>
 <body>
+
+<!-- ══════════════════════════════
+     GLOBAL BACKGROUND CANVAS
+     Fixed, behind everything, full page
+══════════════════════════════ -->
+<canvas id="bgCanvas"></canvas>
 
 <!-- ────────────── NAV ────────────── -->
 <nav>
@@ -597,7 +592,6 @@
   </button>
 </nav>
 
-<!-- Mobile drawer -->
 <div class="mobile-menu" id="mobileMenu">
   <a href="#about"           onclick="closeMenu()">About</a>
   <a href="#skills"          onclick="closeMenu()">Skills</a>
@@ -636,47 +630,18 @@
 <section id="skills">
   <h2 class="section-title">Skills</h2>
   <div class="title-underline"></div>
-
   <div class="skills-row">
-    <div class="skill-item">
-      <div class="skill-logo"><img src="images/html1.webp" alt="HTML5"/></div>
-      <span class="skill-label">HTML</span>
-    </div>
-    <div class="skill-item">
-      <div class="skill-logo"><img src="images/css.webp" alt="CSS3"/></div>
-      <span class="skill-label">CSS</span>
-    </div>
-    <div class="skill-item">
-      <div class="skill-logo"><img src="images/js.webp" alt="JavaScript"/></div>
-      <span class="skill-label">JS</span>
-    </div>
-    <div class="skill-item">
-      <div class="skill-logo"><img src="images/react.png" alt="React"/></div>
-      <span class="skill-label">React</span>
-    </div>
-    <div class="skill-item">
-      <div class="skill-logo"><img src="images/wp.webp" alt="WordPress"/></div>
-      <span class="skill-label">WordPress</span>
-    </div>
+    <div class="skill-item"><div class="skill-logo"><img src="images/html1.webp" alt="HTML5"/></div><span class="skill-label">HTML</span></div>
+    <div class="skill-item"><div class="skill-logo"><img src="images/css.webp"   alt="CSS3"/></div><span class="skill-label">CSS</span></div>
+    <div class="skill-item"><div class="skill-logo"><img src="images/js.webp"    alt="JavaScript"/></div><span class="skill-label">JS</span></div>
+    <div class="skill-item"><div class="skill-logo"><img src="images/react.png"  alt="React"/></div><span class="skill-label">React</span></div>
+    <div class="skill-item"><div class="skill-logo"><img src="images/wp.webp"    alt="WordPress"/></div><span class="skill-label">WordPress</span></div>
   </div>
-
   <div class="skills-row">
-    <div class="skill-item">
-      <div class="skill-logo"><img src="images/ps.webp" alt="Photoshop"/></div>
-      <span class="skill-label">Photoshop</span>
-    </div>
-    <div class="skill-item">
-      <div class="skill-logo"><img src="images/ai.webp" alt="Illustrator"/></div>
-      <span class="skill-label">Illustrator</span>
-    </div>
-    <div class="skill-item">
-      <div class="skill-logo"><img src="images/fg.png" alt="Figma"/></div>
-      <span class="skill-label">Figma</span>
-    </div>
-    <div class="skill-item">
-      <div class="skill-logo"><img src="images/cv.png" alt="Canva"/></div>
-      <span class="skill-label">Canva</span>
-    </div>
+    <div class="skill-item"><div class="skill-logo"><img src="images/ps.webp"  alt="Photoshop"/></div><span class="skill-label">Photoshop</span></div>
+    <div class="skill-item"><div class="skill-logo"><img src="images/ai.webp"  alt="Illustrator"/></div><span class="skill-label">Illustrator</span></div>
+    <div class="skill-item"><div class="skill-logo"><img src="images/fg.png"   alt="Figma"/></div><span class="skill-label">Figma</span></div>
+    <div class="skill-item"><div class="skill-logo"><img src="images/cv.png"   alt="Canva"/></div><span class="skill-label">Canva</span></div>
   </div>
 </section>
 
@@ -684,7 +649,6 @@
 <section id="projects">
   <h2 class="section-title">Projects</h2>
   <div class="title-underline"></div>
-
   <div class="project-zigzag">
 
     <div class="project-item">
@@ -694,16 +658,11 @@
           <div class="project-overlay-title">PrintMinutes</div>
         </div>
         <div class="project-tags">
-          <span class="project-tag">HTML</span>
-          <span class="project-tag">CSS</span>
-          <span class="project-tag">JS</span>
-          <span class="project-tag">MONGODB</span>
-          <span class="project-tag">NODE.JS</span>
-          <span class="project-tag">EXPRESS.JS</span>
+          <span class="project-tag">HTML</span><span class="project-tag">CSS</span>
+          <span class="project-tag">JS</span><span class="project-tag">MONGODB</span>
+          <span class="project-tag">NODE.JS</span><span class="project-tag">EXPRESS.JS</span>
         </div>
-        <div class="project-visit">
-          <a class="btn-visit" href="https://printhubminutes.onrender.com/" target="_blank">Visit</a>
-        </div>
+        <div class="project-visit"><a class="btn-visit" href="https://printhubminutes.onrender.com/" target="_blank">Visit</a></div>
       </div>
       <div class="project-content">
         <p>PrintMinutes is an online print ordering platform that makes printing as fast and convenient as ordering products online. Customers can easily upload their designs, customize print requirements, place orders, and track their printing needs through a seamless digital experience.</p>
@@ -717,14 +676,10 @@
           <div class="project-overlay-title">ChronosGuard</div>
         </div>
         <div class="project-tags">
-          <span class="project-tag">SOLIDITY</span>
-          <span class="project-tag">REACT.JS</span>
-          <span class="project-tag">ETHERS.JS</span>
-          <span class="project-tag">SHA-256</span>
+          <span class="project-tag">SOLIDITY</span><span class="project-tag">REACT.JS</span>
+          <span class="project-tag">ETHERS.JS</span><span class="project-tag">SHA-256</span>
         </div>
-        <div class="project-visit">
-          <a class="btn-visit" href="https://chimerical-parfait-c2be34.netlify.app/" target="_blank">Visit</a>
-        </div>
+        <div class="project-visit"><a class="btn-visit" href="https://chimerical-parfait-c2be34.netlify.app/" target="_blank">Visit</a></div>
       </div>
       <div class="project-content">
         <p>ChronosGuard is a blockchain-based IP protection application that acts like a digital audio copyright locker, allowing creators to safely register, protect, and verify their intellectual property.</p>
@@ -740,15 +695,11 @@
   <div class="title-underline"></div>
   <div class="spec-grid">
     <div class="spec-card">
-      <div class="spec-icon-wrap">
-        <img src="images/web.png" alt="Web Development"/>
-      </div>
+      <div class="spec-icon-wrap"><img src="images/web.png" alt="Web Development"/></div>
       <p>I develop modern, responsive, SEO friendly and user-friendly websites that help businesses establish a strong online presence and achieve their digital goals.</p>
     </div>
     <div class="spec-card">
-      <div class="spec-icon-wrap">
-        <img src="images/graphic.png" alt="Graphic Design"/>
-      </div>
+      <div class="spec-icon-wrap"><img src="images/graphic.png" alt="Graphic Design"/></div>
       <p>I specialize in graphic design, branding, social media creatives, and marketing materials that help businesses build a strong visual presence.</p>
     </div>
   </div>
@@ -763,23 +714,18 @@
     <div class="contact-left">
       <h3>Get in Touch</h3>
       <p>Have a project in mind? Let's work together to create something amazing. Feel free to get in touch to discuss your ideas and design needs.</p>
-      <div class="contact-info-item">
-        <span class="icon">📍</span> Chennai, Tamilnadu, India
-      </div>
-      <div class="contact-info-item">
-        <span class="icon">✉️</span> suhayl1427@gmail.com
-      </div>
+      <div class="contact-info-item"><span class="icon">📍</span> Chennai, Tamilnadu, India</div>
+      <div class="contact-info-item"><span class="icon">✉️</span> suhayl1427@gmail.com</div>
       <div class="social-links">
-        <a class="social-icon linkedin" href="https://www.linkedin.com/in/mohamed-suhail0406" target="_blank" rel="noopener" title="LinkedIn">
+        <a class="social-icon linkedin" href="https://www.linkedin.com/in/mohamed-suhail0406" target="_blank" rel="noopener">
           <svg viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
         </a>
-        <a class="social-icon github" href="https://github.com/Suhayl1427" target="_blank" rel="noopener" title="GitHub">
+        <a class="social-icon github" href="https://github.com/Suhayl1427" target="_blank" rel="noopener">
           <svg viewBox="0 0 24 24"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
         </a>
       </div>
     </div>
 
-    <!-- ── Formspree contact form ── -->
     <div class="contact-form">
       <div class="form-row">
         <div class="form-group">
@@ -802,96 +748,261 @@
   </div>
 </section>
 
-<!-- ────────────── SCRIPTS ────────────── -->
+
+<!-- ════════════════════════════════════════
+     SCRIPTS
+════════════════════════════════════════ -->
 <script>
-  /* ── Formspree AJAX submit ── */
-  async function submitForm() {
-    const name    = document.getElementById('cf-name');
-    const email   = document.getElementById('cf-email');
-    const message = document.getElementById('cf-message');
-    const btn     = document.getElementById('sendBtn');
-    const toast   = document.getElementById('formToast');
+/* ═══════════════════════════════════════════════════
+   FULL-PAGE PARTICLE NETWORK BACKGROUND
+   Fixed canvas that persists as user scrolls.
+   Draws:  grid  →  connecting lines  →  dots
+   Mouse attract-repel works anywhere on page.
+═══════════════════════════════════════════════════ */
+(function () {
+  const canvas = document.getElementById('bgCanvas');
+  const ctx    = canvas.getContext('2d');
 
-    /* Basic client-side validation */
-    if (!name.value.trim() || !email.value.trim() || !message.value.trim()) {
-      showToast('error', 'Please fill in all fields before sending.');
-      return;
+  /* ── tunables ── */
+  const PARTICLE_COUNT  = 70;
+  const CONNECT_DIST    = 150;
+  const DOT_RADIUS      = 2.5;
+  const SPEED           = 0.4;
+  const REPEL_RADIUS    = 130;
+  const REPEL_STRENGTH  = 2.2;
+  const GRID_CELL       = 80;
+
+  /* particle color in indigo tones */
+  const DOT_COLOR  = '79,70,229';   /* r,g,b */
+  const LINE_COLOR = '79,70,229';
+  const GRID_COLOR = `rgba(79,70,229,0.055)`;
+
+  let W, H;
+  let mouse = { x: -9999, y: -9999 };
+
+  /* size canvas to viewport */
+  function resize() {
+    W = canvas.width  = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', () => { resize(); redistributeParticles(); });
+
+  /* mouse — track anywhere on page */
+  window.addEventListener('mousemove', e => {
+    mouse.x = e.clientX;
+    mouse.y = e.clientY;
+  });
+  window.addEventListener('mouseleave', () => { mouse.x = -9999; mouse.y = -9999; });
+
+  /* touch */
+  window.addEventListener('touchmove', e => {
+    mouse.x = e.touches[0].clientX;
+    mouse.y = e.touches[0].clientY;
+  }, { passive: true });
+  window.addEventListener('touchend', () => { mouse.x = -9999; mouse.y = -9999; });
+
+  /* ── Particle ── */
+  class Particle {
+    constructor(init) {
+      this.x  = Math.random() * W;
+      this.y  = Math.random() * H;
+      this.ox = this.x;   /* origin — used for soft spring-back */
+      this.oy = this.y;
+      this.vx = (Math.random() - 0.5) * SPEED;
+      this.vy = (Math.random() - 0.5) * SPEED;
+      this.r  = DOT_RADIUS + Math.random() * 1.5;
     }
 
-    btn.disabled    = true;
-    btn.textContent = 'Sending…';
-    toast.className = 'form-toast';
-    toast.style.display = 'none';
-
-    try {
-      const res = await fetch('https://formspree.io/f/xdavawlq', {
-        method:  'POST',
-        headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name:    name.value.trim(),
-          email:   email.value.trim(),
-          message: message.value.trim()
-        })
-      });
-
-      if (res.ok) {
-        showToast('success', '✅ Message sent! I\'ll get back to you soon.');
-        name.value = '';
-        email.value = '';
-        message.value = '';
-      } else {
-        const data = await res.json();
-        const errMsg = data.errors ? data.errors.map(e => e.message).join(', ') : 'Something went wrong.';
-        showToast('error', '❌ ' + errMsg);
+    update() {
+      /* mouse repulsion */
+      const dx   = this.x - mouse.x;
+      const dy   = this.y - mouse.y;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist < REPEL_RADIUS && dist > 0) {
+        const force = (1 - dist / REPEL_RADIUS) * REPEL_STRENGTH;
+        this.vx += (dx / dist) * force * 0.12;
+        this.vy += (dy / dist) * force * 0.12;
       }
-    } catch (err) {
-      showToast('error', '❌ Network error. Please try again.');
+
+      /* velocity damping */
+      this.vx *= 0.98;
+      this.vy *= 0.98;
+
+      /* clamp speed */
+      const spd = Math.sqrt(this.vx * this.vx + this.vy * this.vy);
+      if (spd > SPEED * 3) {
+        this.vx = (this.vx / spd) * SPEED * 3;
+        this.vy = (this.vy / spd) * SPEED * 3;
+      }
+      /* minimum drift */
+      if (spd < SPEED * 0.3) {
+        this.vx += (Math.random() - 0.5) * 0.05;
+        this.vy += (Math.random() - 0.5) * 0.05;
+      }
+
+      this.x += this.vx;
+      this.y += this.vy;
+
+      /* wrap */
+      if (this.x < -20)    { this.x = W + 20; this.ox = this.x; }
+      if (this.x > W + 20) { this.x = -20;    this.ox = this.x; }
+      if (this.y < -20)    { this.y = H + 20; this.oy = this.y; }
+      if (this.y > H + 20) { this.y = -20;    this.oy = this.y; }
     }
 
-    btn.disabled    = false;
-    btn.textContent = 'Send Message';
+    draw() {
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(${DOT_COLOR},0.72)`;
+      ctx.fill();
+    }
   }
 
-  function showToast(type, msg) {
-    const toast = document.getElementById('formToast');
-    toast.textContent = msg;
-    toast.className   = 'form-toast ' + type;
-  }
+  let particles = Array.from({ length: PARTICLE_COUNT }, () => new Particle(true));
 
-  /* ── Hamburger toggle ── */
-  const toggle     = document.getElementById('navToggle');
-  const mobileMenu = document.getElementById('mobileMenu');
-  toggle.addEventListener('click', () => {
-    toggle.classList.toggle('open');
-    mobileMenu.classList.toggle('open');
-  });
-  function closeMenu() {
-    toggle.classList.remove('open');
-    mobileMenu.classList.remove('open');
-  }
-  document.addEventListener('click', e => {
-    if (!toggle.contains(e.target) && !mobileMenu.contains(e.target)) closeMenu();
-  });
-
-  /* ── Active nav highlight ── */
-  const sections = document.querySelectorAll('section');
-  const navLinks = document.querySelectorAll('.nav-links a');
-  window.addEventListener('scroll', () => {
-    let current = '';
-    sections.forEach(s => { if (window.scrollY >= s.offsetTop - 80) current = s.id; });
-    navLinks.forEach(a => {
-      const active       = a.getAttribute('href') === '#' + current;
-      a.style.color      = active ? '#fff' : 'rgba(255,255,255,0.75)';
-      a.style.fontWeight = active ? '600'  : '400';
+  function redistributeParticles() {
+    particles.forEach(p => {
+      p.x = Math.random() * W;
+      p.y = Math.random() * H;
     });
-  });
+  }
 
-  /* ── Project scroll animation ── */
-  const projectItems = document.querySelectorAll('.project-item');
-  const observer = new IntersectionObserver(entries => {
-    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('show'); });
-  }, { threshold: 0.15 });
-  projectItems.forEach(item => observer.observe(item));
+  /* ── Grid ── */
+  function drawGrid() {
+    ctx.save();
+    ctx.strokeStyle = GRID_COLOR;
+    ctx.lineWidth   = 1;
+    ctx.beginPath();
+    for (let x = 0; x <= W; x += GRID_CELL) { ctx.moveTo(x, 0); ctx.lineTo(x, H); }
+    for (let y = 0; y <= H; y += GRID_CELL) { ctx.moveTo(0, y); ctx.lineTo(W, y); }
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  /* ── Lines between close particles ── */
+  function drawLines() {
+    ctx.save();
+    for (let i = 0; i < particles.length; i++) {
+      for (let j = i + 1; j < particles.length; j++) {
+        const a  = particles[i];
+        const b  = particles[j];
+        const dx = a.x - b.x;
+        const dy = a.y - b.y;
+        const d  = Math.sqrt(dx * dx + dy * dy);
+        if (d < CONNECT_DIST) {
+          const alpha = (1 - d / CONNECT_DIST) * 0.5;
+          ctx.beginPath();
+          ctx.moveTo(a.x, a.y);
+          ctx.lineTo(b.x, b.y);
+          ctx.strokeStyle = `rgba(${LINE_COLOR},${alpha})`;
+          ctx.lineWidth   = 0.9;
+          ctx.stroke();
+        }
+      }
+    }
+    ctx.restore();
+  }
+
+  /* ── Animation loop ── */
+  function loop() {
+    ctx.clearRect(0, 0, W, H);
+    drawGrid();
+    drawLines();
+    particles.forEach(p => { p.update(); p.draw(); });
+    requestAnimationFrame(loop);
+  }
+
+  loop();
+})();
+
+
+/* ═══════════════════════════════════════════════════
+   FORMSPREE AJAX SUBMIT
+═══════════════════════════════════════════════════ */
+async function submitForm() {
+  const name    = document.getElementById('cf-name');
+  const email   = document.getElementById('cf-email');
+  const message = document.getElementById('cf-message');
+  const btn     = document.getElementById('sendBtn');
+
+  if (!name.value.trim() || !email.value.trim() || !message.value.trim()) {
+    showToast('error', 'Please fill in all fields before sending.');
+    return;
+  }
+
+  btn.disabled    = true;
+  btn.textContent = 'Sending…';
+  document.getElementById('formToast').className = 'form-toast';
+
+  try {
+    const res = await fetch('https://formspree.io/f/xdavawlq', {
+      method:  'POST',
+      headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: name.value.trim(), email: email.value.trim(), message: message.value.trim() })
+    });
+    if (res.ok) {
+      showToast('success', "✅ Message sent! I'll get back to you soon.");
+      name.value = ''; email.value = ''; message.value = '';
+    } else {
+      const data = await res.json();
+      showToast('error', '❌ ' + (data.errors ? data.errors.map(e => e.message).join(', ') : 'Something went wrong.'));
+    }
+  } catch {
+    showToast('error', '❌ Network error. Please try again.');
+  }
+  btn.disabled    = false;
+  btn.textContent = 'Send Message';
+}
+function showToast(type, msg) {
+  const t = document.getElementById('formToast');
+  t.textContent = msg;
+  t.className   = 'form-toast ' + type;
+}
+
+
+/* ═══════════════════════════════════════════════════
+   HAMBURGER
+═══════════════════════════════════════════════════ */
+const toggle     = document.getElementById('navToggle');
+const mobileMenu = document.getElementById('mobileMenu');
+toggle.addEventListener('click', () => {
+  toggle.classList.toggle('open');
+  mobileMenu.classList.toggle('open');
+});
+function closeMenu() {
+  toggle.classList.remove('open');
+  mobileMenu.classList.remove('open');
+}
+document.addEventListener('click', e => {
+  if (!toggle.contains(e.target) && !mobileMenu.contains(e.target)) closeMenu();
+});
+
+
+/* ═══════════════════════════════════════════════════
+   ACTIVE NAV HIGHLIGHT
+═══════════════════════════════════════════════════ */
+const sections = document.querySelectorAll('section');
+const navLinks = document.querySelectorAll('.nav-links a');
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(s => { if (window.scrollY >= s.offsetTop - 80) current = s.id; });
+  navLinks.forEach(a => {
+    const active       = a.getAttribute('href') === '#' + current;
+    a.style.color      = active ? '#fff' : 'rgba(255,255,255,0.75)';
+    a.style.fontWeight = active ? '600'  : '400';
+  });
+});
+
+
+/* ═══════════════════════════════════════════════════
+   PROJECT SCROLL ANIMATION
+═══════════════════════════════════════════════════ */
+const projectItems = document.querySelectorAll('.project-item');
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('show'); });
+}, { threshold: 0.15 });
+projectItems.forEach(item => obs.observe(item));
 </script>
 </body>
 </html>
