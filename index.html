@@ -24,9 +24,39 @@
 
   body {
     font-family: 'DM Sans', sans-serif;
-    background: var(--white);
+    /* Grid paper background — matches the screenshot exactly */
+    background-color: #ffffff;
+    background-image:
+      linear-gradient(rgba(180, 180, 200, 0.25) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(180, 180, 200, 0.25) 1px, transparent 1px);
+    background-size: 60px 60px;
     color: #111;
     overflow-x: hidden;
+  }
+
+  /* ══════════════════════════════
+     ANIMATED DOTS CANVAS
+  ══════════════════════════════ */
+  #dots-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Make sure all content stays above the canvas */
+  nav, section, .mobile-menu {
+    position: relative;
+    z-index: 1;
+  }
+  nav {
+    z-index: 100;
+  }
+  .mobile-menu {
+    z-index: 99;
   }
 
   /* ══════════════════════════════
@@ -35,7 +65,6 @@
   nav {
     position: fixed;
     top: 0; left: 0; right: 0;
-    z-index: 100;
     background: var(--gradient);
     padding: 0 3rem;
     height: 56px;
@@ -93,7 +122,6 @@
     position: fixed;
     top: 56px; left: 0; right: 0;
     background: var(--gradient);
-    z-index: 99;
     flex-direction: column;
     padding: 1rem 0;
     border-top: 1px solid rgba(255,255,255,0.1);
@@ -118,7 +146,7 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-    background: var(--white);
+    background: transparent;
   }
 
   .section-title {
@@ -539,6 +567,9 @@
 </head>
 <body>
 
+<!-- ANIMATED DOTS CANVAS -->
+<canvas id="dots-canvas"></canvas>
+
 <!-- NAV -->
 <nav>
   <a class="nav-brand" href="#home">SUHAIL</a>
@@ -711,6 +742,102 @@
 </section>
 
 <script>
+/* ══════════════════════════════
+   ANIMATED FALLING DOTS BACKGROUND
+══════════════════════════════ */
+(function() {
+  const canvas = document.getElementById('dots-canvas');
+  const ctx = canvas.getContext('2d');
+
+  let dots = [];
+  const DOT_COUNT = 80;
+
+  function resize() {
+    canvas.width  = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+
+  function randomBetween(min, max) {
+    return Math.random() * (max - min) + min;
+  }
+
+  function blueGradientColor(t) {
+    const r = Math.round(79  + t * (129 - 79));
+    const g = Math.round(70  + t * (140 - 70));
+    const b = Math.round(229 + t * (248 - 229));
+    return `rgba(${r},${g},${b},0.5)`;
+  }
+
+  function createDot() {
+    const t = Math.random();
+    return {
+      x:       randomBetween(0, canvas.width),
+      y:       randomBetween(-canvas.height, 0),
+      r:       randomBetween(2, 7),
+      speed:   randomBetween(0.1, 0.45),
+      opacity: randomBetween(0.25, 0.55),
+      color:   blueGradientColor(t),
+      wobble:  randomBetween(-0.15, 0.15)
+    };
+  }
+
+  function initDots() {
+    dots = [];
+    for (let i = 0; i < DOT_COUNT; i++) {
+      const d = createDot();
+      d.y = randomBetween(0, canvas.height);
+      dots.push(d);
+    }
+  }
+
+  function drawDot(d) {
+    const grad = ctx.createRadialGradient(
+      d.x - d.r * 0.3, d.y - d.r * 0.3, d.r * 0.1,
+      d.x, d.y, d.r
+    );
+    grad.addColorStop(0, `rgba(180, 195, 255, ${d.opacity})`);
+    grad.addColorStop(0.5, `rgba(100, 120, 240, ${d.opacity * 0.85})`);
+    grad.addColorStop(1,   `rgba(55,  48,  163, ${d.opacity * 0.4})`);
+
+    ctx.beginPath();
+    ctx.arc(d.x, d.y, d.r, 0, Math.PI * 2);
+    ctx.fillStyle = grad;
+    ctx.fill();
+  }
+
+  function animate() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    dots.forEach(d => {
+      drawDot(d);
+      d.y += d.speed;
+      d.x += d.wobble;
+
+      if (d.y - d.r > canvas.height) {
+        const t = Math.random();
+        d.x     = randomBetween(0, canvas.width);
+        d.y     = -d.r * 2;
+        d.r     = randomBetween(2, 7);
+        d.speed = randomBetween(0.1, 0.45);
+        d.opacity = randomBetween(0.25, 0.55);
+        d.color = blueGradientColor(t);
+        d.wobble = randomBetween(-0.15, 0.15);
+      }
+    });
+
+    requestAnimationFrame(animate);
+  }
+
+  resize();
+  initDots();
+  animate();
+
+  window.addEventListener('resize', () => {
+    resize();
+    initDots();
+  });
+})();
+
 /* ── Formspree AJAX submit ── */
 async function submitForm() {
   const name    = document.getElementById('cf-name');
